@@ -1,3 +1,9 @@
+global using dataApi.Database;
+global using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+
+
+
 namespace dataApi
 {
     public class Program
@@ -6,9 +12,17 @@ namespace dataApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // Add authentication
+            var mySecret = builder.Configuration.GetValue<string>("auth:user");
+            //var secret2 = builder.Configuration.GetValue<string>("ConnectionString:DefaultConnection");
+
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddDbContext<Databasecontext>(options =>
+            {
+                options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
